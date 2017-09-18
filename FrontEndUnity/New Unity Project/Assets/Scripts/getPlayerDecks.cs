@@ -23,7 +23,9 @@ public class getPlayerDecks : MonoBehaviour
     }
 
     // Use this for initialization
-    void Start()
+    void Start() {
+        
+    }
     
 
     

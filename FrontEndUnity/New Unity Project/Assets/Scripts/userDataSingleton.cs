@@ -11,7 +11,7 @@ public class userDataSingleton : MonoBehaviour {
 
 	static userDataSingleton instance = null;
 
-	public jsonToClass jsonToClass;
+	public static jsonToClass jsonToClass;
 
 	private static string user;
 
@@ -19,9 +19,13 @@ public class userDataSingleton : MonoBehaviour {
 
 	public static Deck selectedDeck;
 
+    private static IEnumerator routine;
+
+    public static string test = "test";
+
 	// Use this for initialization
 	void Start () {
-		if (instance != null) {
+		if (instance == null) {
 			Destroy (gameObject);
 			print ("singleton copy destructed");
 		} else {
@@ -33,13 +37,14 @@ public class userDataSingleton : MonoBehaviour {
 	public static void setUser(string loggedUser) {
 		user = loggedUser;
 		getUserData(user);
-	}
+;	}
 
 	public static void getUser() {
 		
 	}
 
 	private static void getUserData(string user) {
+        print("in getdata");
         string CreateAccountURL = "http://localhost:2000/getUserDecks";
         string json = "{\"username\": \"" + userDataSingleton.user + "\"}";
         byte[] body = Encoding.UTF8.GetBytes(json);
@@ -50,18 +55,23 @@ public class userDataSingleton : MonoBehaviour {
 
         WWW www = new WWW(CreateAccountURL, body, headers);
         
-        StartCoroutine(WaitForRequest(www));
+        routine = WaitForRequest(www);
+        instance.StartCoroutine(routine);
     }
 
     private static IEnumerator WaitForRequest(WWW www)
     {
+        print("in anders hizzle");
         yield return www;
 
         // check for errors
         if (www.error == null)
         {
+            print("jha en nu");
 			List<Deck> deckList =  new List<Deck>();
             JsonData jsonPlayerDecks = JsonMapper.ToObject(www.text);
+
+            print(jsonPlayerDecks["value"]);
 
             foreach (JsonData jsonDeck in jsonPlayerDecks["value"])
             {
@@ -71,15 +81,16 @@ public class userDataSingleton : MonoBehaviour {
 
             //set data in user singleton
             userDataSingleton.setPlayerDecks(deckList);
+            print(getPlayerDecks());
 
-            print(loadUIScript);
 
             //call mehthod to load decks in UI
-            loadUIScript.GetComponent<loadUIElements>().load();
+            // loadUIScript.GetComponent<loadUIElements>().load();
         }
         else
         {
-            Debug.Log("WWW Error: " + www.error);
+
+            print("WWW Error: " + www.error);
         }
     }
 

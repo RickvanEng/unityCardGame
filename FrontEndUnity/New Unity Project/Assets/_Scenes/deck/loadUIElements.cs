@@ -10,6 +10,8 @@ public class loadUIElements : MonoBehaviour {
 
 	public GameObject prefab;
 	void Start () {
+		print(userDataSingleton.test);
+		print(userDataSingleton.getPlayerDecks());
 	}
 	
 	//for each Deck in userDataSingleton we are gonna load a deck.
